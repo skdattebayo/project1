@@ -99,7 +99,8 @@ namespace CourseProject
                 }
             }).Start();
             Thread.Sleep(2000);
-            while (!this.gameEnded) {
+            while (!this.gameEnded)
+            {
                 Thread.Sleep(400);
                 this.Tick();
             }
@@ -124,17 +125,18 @@ namespace CourseProject
             int[] thirdLine = lines[2].Split(' ').Select(number => Convert.ToInt32(number)).ToArray();
 
             this.direction = new Vector2(thirdLine[0], thirdLine[1]);
-            
+
             this.field = new Cell[n][];
             for (int i = 0; i < this.n; ++i)
             {
                 this.field[i] = new Cell[this.m];
                 for (int j = 0; j < this.m; ++j)
                 {
-                    if (lines[i+3][j] == '#')
+                    if (lines[i + 3][j] == '#')
                     {
                         this.field[i][j] = new WallCell();
-                    } else
+                    }
+                    else
                     {
                         this.field[i][j] = new EmptyCell();
                     }
@@ -215,7 +217,7 @@ namespace CourseProject
                 }
                 Console.WriteLine();
             }
-            
+
             foreach (var snakePostiion in this.snake.snake)
             {
                 Console.SetCursorPosition((int)Math.Round(snakePostiion.X), (int)Math.Round(snakePostiion.Y));
@@ -223,7 +225,7 @@ namespace CourseProject
             }
         }
 
-        private Cell this[Vector2 pos] 
+        private Cell this[Vector2 pos]
         {
             get => this.field[(int)Math.Round(pos.Y)][(int)Math.Round(pos.X)];
             set { this.field[(int)Math.Round(pos.Y)][(int)Math.Round(pos.X)] = value; }

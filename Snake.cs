@@ -35,7 +35,8 @@ namespace CourseProject
             Console.Write("@");
         }
 
-        public Vector2 Head  {
+        public Vector2 Head
+        {
             get => this.snake.Last.Value;
         }
 

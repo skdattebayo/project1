@@ -1,0 +1,9 @@
+C:\Users\drozhko\source\repos\CourseProject1\bin\Debug\CourseProject1.exe.config
+C:\Users\drozhko\source\repos\CourseProject1\bin\Debug\CourseProject1.exe
+C:\Users\drozhko\source\repos\CourseProject1\bin\Debug\CourseProject1.pdb
+C:\Users\drozhko\source\repos\CourseProject1\obj\Debug\CourseProject1.csproj.AssemblyReference.cache
+C:\Users\drozhko\source\repos\CourseProject1\obj\Debug\CourseProject.Properties.Resources.resources
+C:\Users\drozhko\source\repos\CourseProject1\obj\Debug\CourseProject1.csproj.GenerateResource.cache
+C:\Users\drozhko\source\repos\CourseProject1\obj\Debug\CourseProject1.csproj.CoreCompileInputs.cache
+C:\Users\drozhko\source\repos\CourseProject1\obj\Debug\CourseProject1.exe
+C:\Users\drozhko\source\repos\CourseProject1\obj\Debug\CourseProject1.pdb
