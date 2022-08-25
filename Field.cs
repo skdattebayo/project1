@@ -4,43 +4,57 @@ using System.Numerics;
 using System.Text;
 using System.Linq;
 using System.Threading;
+using System.IO;
 
 namespace CourseProject
 {
     class Field
     {
         private static Random random = new Random();
+        private const string FIELD_PATH = @"C:\field\field.txt";
 
-        const int n = 20;
-        const int m = 60;
+        private int n;
+        private int m;
+        private Vector2 snakePosition;
+        private int snakeLength;
 
-        private Cell[][] field = new Cell[n][];
+        private Cell[][] field;
 
         private bool gameEnded = false;
         private Vector2 foodPosition;
 
         public Snake snake;
-        public Vector2 direction = new Vector2(1, 0);
+        public Vector2 direction;
         public Vector2? bufferDirection = null;
 
 
         public Field()
         {
-            this.snake = new Snake(this, new Vector2(10, 10), this.direction, 3);
-            for (int i = 0; i < n; ++i)
+
+            if (!this.LoadField())
             {
-                field[i] = new Cell[m];
-                for (int j = 0; j < m; ++j)
+                this.direction = new Vector2(1, 0);
+                this.n = 20;
+                this.m = 60;
+                this.snakePosition = new Vector2(10, 10);
+                this.snakeLength = 3;
+                for (int i = 0; i < n; ++i)
                 {
-                    if (i == 0 || i == n - 1 || j == 0 || j == m - 1)
+                    field[i] = new Cell[m];
+                    for (int j = 0; j < m; ++j)
                     {
-                        field[i][j] = new WallCell();
-                    } else
-                    {
-                        field[i][j] = new EmptyCell();
+                        if (i == 0 || i == n - 1 || j == 0 || j == m - 1)
+                        {
+                            field[i][j] = new WallCell();
+                        }
+                        else
+                        {
+                            field[i][j] = new EmptyCell();
+                        }
                     }
                 }
             }
+            this.snake = new Snake(this, this.snakePosition, this.direction, this.snakeLength);
         }
 
         public void GenerateFood()
@@ -84,11 +98,50 @@ namespace CourseProject
                     this.HandleKeyDown(Console.ReadKey(true).Key);
                 }
             }).Start();
-
+            Thread.Sleep(2000);
             while (!this.gameEnded) {
-                Thread.Sleep(100);
+                Thread.Sleep(400);
                 this.Tick();
             }
+        }
+
+        private bool LoadField()
+        {
+            if (!File.Exists(FIELD_PATH)) return false;
+
+            string[] lines = File.ReadAllLines(FIELD_PATH);
+
+            int[] firstLine = lines[0].Split(' ').Select(number => Convert.ToInt32(number)).ToArray();
+
+            this.n = firstLine[0];
+            this.m = firstLine[1];
+
+            int[] secondLine = lines[1].Split(' ').Select(number => Convert.ToInt32(number)).ToArray();
+
+            this.snakePosition = new Vector2(secondLine[0], secondLine[1]);
+            this.snakeLength = secondLine[2];
+
+            int[] thirdLine = lines[2].Split(' ').Select(number => Convert.ToInt32(number)).ToArray();
+
+            this.direction = new Vector2(thirdLine[0], thirdLine[1]);
+            
+            this.field = new Cell[n][];
+            for (int i = 0; i < this.n; ++i)
+            {
+                this.field[i] = new Cell[this.m];
+                for (int j = 0; j < this.m; ++j)
+                {
+                    if (lines[i+3][j] == '#')
+                    {
+                        this.field[i][j] = new WallCell();
+                    } else
+                    {
+                        this.field[i][j] = new EmptyCell();
+                    }
+                }
+            }
+
+            return true;
         }
 
         async public void HandleKeyDown(ConsoleKey key)
