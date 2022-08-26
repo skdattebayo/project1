@@ -5,11 +5,16 @@ using System.Text;
 using System.Linq;
 using System.Threading;
 using System.IO;
+using CourseProject1;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace CourseProject
 {
-    class Field
+    public class Field
     {
+        private const int PX_PER_CELL = 30;
+
         private static Random random = new Random();
         private const string FIELD_PATH = @"C:\field\field.txt";
 
@@ -27,15 +32,17 @@ namespace CourseProject
         public Vector2 direction;
         public Vector2? bufferDirection = null;
 
+        private Form1 form;
+
 
         public Field()
         {
-
             if (!this.LoadField())
             {
                 this.direction = new Vector2(1, 0);
                 this.n = 20;
                 this.m = 60;
+                this.field = new Cell[n][];
                 this.snakePosition = new Vector2(10, 10);
                 this.snakeLength = 3;
                 for (int i = 0; i < n; ++i)
@@ -82,28 +89,29 @@ namespace CourseProject
             this.foodPosition = result;
 
             this.field[(int)Math.Round(result.Y)][(int)Math.Round(result.X)] = new FoodCell();
-            Console.SetCursorPosition((int)Math.Round(result.X), (int)Math.Round(result.Y));
-            this.field[(int)Math.Round(result.Y)][(int)Math.Round(result.X)].Draw();
+            
+            this.field[(int)Math.Round(result.Y)][(int)Math.Round(result.X)].Draw(this.form.CreateGraphics(), (int)Math.Round(result.X) * PX_PER_CELL, (int)Math.Round(result.Y) * PX_PER_CELL, PX_PER_CELL);
         }
 
-        public void Start()
+        public void Start(Form1 form)
         {
+            this.form = form;
             this.GenerateFood();
-            this.Draw();
 
+            Thread.Sleep(3000);
             new Thread(() =>
             {
-                while (true)
+                while (!this.gameEnded)
                 {
-                    this.HandleKeyDown(Console.ReadKey(true).Key);
+                    Thread.Sleep(100);
+                    this.Tick();
                 }
             }).Start();
-            Thread.Sleep(2000);
-            while (!this.gameEnded)
-            {
-                Thread.Sleep(400);
-                this.Tick();
-            }
+        }
+
+        public void SetFormSize(Form1 form)
+        {
+            form.Size = new Size(PX_PER_CELL * (m + 2), PX_PER_CELL * (n+2));
         }
 
         private bool LoadField()
@@ -146,21 +154,21 @@ namespace CourseProject
             return true;
         }
 
-        async public void HandleKeyDown(ConsoleKey key)
+        public void HandleKeyDown(Keys key)
         {
-            if (key == ConsoleKey.LeftArrow)
+            if (key == Keys.Left)
             {
                 this.bufferDirection = new Vector2(-1, 0);
             }
-            else if (key == ConsoleKey.RightArrow)
+            else if (key == Keys.Right)
             {
                 this.bufferDirection = new Vector2(1, 0);
             }
-            else if (key == ConsoleKey.UpArrow)
+            else if (key == Keys.Up)
             {
                 this.bufferDirection = new Vector2(0, -1);
             }
-            else if (key == ConsoleKey.DownArrow)
+            else if (key == Keys.Down)
             {
                 this.bufferDirection = new Vector2(0, 1);
             }
@@ -174,10 +182,8 @@ namespace CourseProject
         public void EndGame()
         {
             this.gameEnded = true;
-            Console.SetCursorPosition(3, Console.WindowHeight - 1);
-            Console.Beep();
-            Console.WriteLine($"Game ended, your score = {this.snake.snake.Count}");
-            Environment.Exit(0);
+            MessageBox.Show($"Game ended, your score = {this.snake.snake.Count}", "(", MessageBoxButtons.OK, MessageBoxIcon.None);
+            Application.Exit();
         }
 
         public void Tick()
@@ -198,30 +204,26 @@ namespace CourseProject
 
             this[this.snake.Head + this.direction].Interact(this);
 
-            Console.SetCursorPosition((int)Math.Round(this.snake.Head.X), (int)Math.Round(this.snake.Head.Y));
-            this.snake.Draw();
 
-            Console.SetCursorPosition((int)Math.Round(prevTail.X), (int)Math.Round(prevTail.Y));
-            this[prevTail].Draw();
+            var graphics = this.form.CreateGraphics();
+            this.snake.Draw(graphics, (int)Math.Round(this.snake.Head.X) * PX_PER_CELL, (int)Math.Round(this.snake.Head.Y) * PX_PER_CELL, PX_PER_CELL);
+
+            this[prevTail].Draw(graphics, (int)Math.Round(prevTail.X) * PX_PER_CELL, (int)Math.Round(prevTail.Y) * PX_PER_CELL, PX_PER_CELL);
         }
 
-        public void Draw()
+        public void Draw(Graphics graphics)
         {
-            Console.SetWindowSize(m + 1, n + 1);
-            Console.SetCursorPosition(0, 0);
             for (int i = 0; i < n; ++i)
             {
                 for (int j = 0; j < m; ++j)
                 {
-                    this.field[i][j].Draw();
+                    this.field[i][j].Draw(graphics, j*PX_PER_CELL, i*PX_PER_CELL, PX_PER_CELL);
                 }
-                Console.WriteLine();
             }
 
             foreach (var snakePostiion in this.snake.snake)
             {
-                Console.SetCursorPosition((int)Math.Round(snakePostiion.X), (int)Math.Round(snakePostiion.Y));
-                this.snake.Draw();
+                this.snake.Draw(graphics, (int)Math.Round(snakePostiion.X) * PX_PER_CELL, (int)Math.Round(snakePostiion.Y) * PX_PER_CELL, PX_PER_CELL);
             }
         }
 

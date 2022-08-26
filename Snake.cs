@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Numerics;
 using System.Text;
 
 namespace CourseProject
 {
-    class Snake
+    public class Snake
     {
         public LinkedList<Vector2> snake = new LinkedList<Vector2>();
         private Field field;
@@ -30,9 +31,9 @@ namespace CourseProject
             this.snake.AddLast(this.snake.Last.Value + direction);
         }
 
-        public void Draw()
+        public void Draw(Graphics graphics, int xCellStart, int yCellStart, int squareSide)
         {
-            Console.Write("@");
+            graphics.FillEllipse(Brushes.Red, xCellStart, yCellStart, squareSide, squareSide);
         }
 
         public Vector2 Head

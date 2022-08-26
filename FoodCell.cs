@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 
 namespace CourseProject
 {
     class FoodCell : Cell
     {
-        public override void Draw()
+        public override void Draw(Graphics graphics, int xCellStart, int yCellStart, int squareSide)
         {
-            Console.Write("&");
+            graphics.FillEllipse(Brushes.Orange, xCellStart, yCellStart,squareSide, squareSide);
         }
 
         public override void Interact(Field field)

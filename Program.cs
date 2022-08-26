@@ -1,5 +1,7 @@
-﻿using System;
+﻿using CourseProject;
+using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -16,7 +18,9 @@ namespace CourseProject1
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            var field = new Field();
+            var form = new Form1(field); 
+            Application.Run(form);
         }
     }
 }
